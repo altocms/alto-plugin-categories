@@ -2,13 +2,18 @@
 	CATEGORIES
 -------------------------------------------- */
 
+.category-home-header {
+    border-top: 1px dotted #ccc;
+}
 .category-home-topic {
     padding-left: 0;
     min-height: 180px;
 }
-.category-home-topic-body {
+.category-home-topic-panel {
     padding: 0 10px 10px;
     min-height: 160px;
+}
+.category-home-topic-title {
 }
 .category-home-item {
     margin-bottom: 8px;

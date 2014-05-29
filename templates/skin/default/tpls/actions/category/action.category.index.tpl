@@ -24,14 +24,14 @@
             {$aTopics = $oCategory->getTopTopics()}
             {foreach $aTopics as $oTopic}
                 <div class="col-sm-6 category-home-topic">
-                <div class="panel panel-default category-home-topic-body">
+                <div class="panel panel-default category-home-topic-panel">
                     <header class="topic-header">
                         {if $oTopic->getPreviewImage()}
                             <img src="{$oTopic->getPreviewImageWebPath('229crop')}" alt="image" />
                         {/if}
-                        <h1 class="category-topic-title">
+                        <h4 class="category-home-topic-title">
                             <a title="{$oTopic->getTitle()|escape:'html'}" href="{$oTopic->getUrl()}">{$oTopic->getTitle()|escape:'html'}</a>
-                        </h1>
+                        </h4>
                     </header>
                     {$oTopic->getText()|strip_tags|trim|truncate:100:'...'}
                 </div>
