@@ -72,9 +72,9 @@ class PluginCategories_ModuleCategory_MapperCategory extends MapperORM {
                     cr.category_id AS ARRAY_KEY_1,
                     topic_id AS ARRAY_KEY_2,
                     topic_id
-                FROM prefix_topic AS t
-                INNER JOIN prefix_blog AS b ON b.blog_id=t.blog_id AND b.blog_type IN(?a:blog_type)
-                INNER JOIN prefix_category_rel AS cr ON cr.blog_id=b.blog_id
+                FROM ?_topic AS t
+                INNER JOIN ?_blog AS b ON b.blog_id=t.blog_id AND b.blog_type IN(?a:blog_type)
+                INNER JOIN ?_category_rel AS cr ON cr.blog_id=b.blog_id
                 WHERE topic_publish=1 AND cr.category_id=?:category_id AND ?s:period
         ";
         if ($sType == 'new') {
