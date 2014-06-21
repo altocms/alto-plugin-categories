@@ -15,6 +15,9 @@
 
 class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin {
 
+    /**
+     * Registers events
+     */
     protected function RegisterEvent() {
 
         parent::RegisterEvent();
@@ -25,7 +28,11 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
         $this->AddEventPreg('/^content-categories$/i', 'EventCategories');
     }
 
-    // Установка собственного обработчика главной страницы
+    /**
+     * Установка собственного обработчика главной страницы
+     *
+     * @return mixed
+     */
     protected function _eventConfigLinks() {
 
         if (($sHomePage = $this->GetPost('homepage')) && ($sHomePage == 'category_homepage')) {
@@ -41,7 +48,12 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
         return parent::_eventConfigLinks();
     }
 
+    /**
+     * Main event to manage categories
+     */
     protected function EventCategories() {
+
+        $this->sMainMenuItem = 'content';
 
         $this->_setTitle($this->Lang_Get('plugin.categories.menu_content_categories'));
         $this->SetTemplateAction('categories/list');
@@ -67,7 +79,14 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
         }
     }
 
+    /**
+     * Adds the category
+     *
+     * @return bool
+     */
     protected function EventCategoriesAdd() {
+
+        $this->sMainMenuItem = 'content';
 
         $this->_setTitle($this->Lang_Get('plugin.categories.add_title'));
         $this->SetTemplateAction('categories/add');
@@ -91,8 +110,12 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
             // * Обрабатываем отправку формы
             return $this->SubmitCategoriesAdd();
         }
+        return null;
     }
 
+    /**
+     * @return bool
+     */
     protected function SubmitCategoriesAdd() {
 
         // * Проверка корректности полей формы
@@ -118,9 +141,17 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
             $this->AddRelations($oCategory);
             Router::Location('admin/content-categories/?add=success');
         }
+        return true;
     }
 
+    /**
+     * Edits the category
+     *
+     * @return bool
+     */
     protected function EventCategoriesEdit() {
+
+        $this->sMainMenuItem = 'content';
 
         // * Получаем категорию
         $iCategoryId = $this->GetParam(1);
@@ -156,6 +187,7 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
                 $_REQUEST['blog'][$oRel->getBlogId()] = $oRel->getBlogId();
             }
         }
+        return null;
     }
 
     protected function SubmitCategoriesEdit($oCategory) {
@@ -192,7 +224,14 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
         }
     }
 
+    /**
+     * Deletes the category
+     *
+     * @return mixed
+     */
     protected function EventCategoriesDelete() {
+
+        $this->sMainMenuItem = 'content';
 
         $this->SetTemplate(false);
 
@@ -213,6 +252,11 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
         }
     }
 
+    /**
+     * Relations between the category and blogs
+     *
+     * @param $oCategory
+     */
     protected function AddRelations($oCategory) {
 
         // * Чистим связи и ставим новые
@@ -235,6 +279,9 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
         }
     }
 
+    /**
+     * @return bool
+     */
     protected function CheckCategoryFields() {
 
         $this->Security_ValidateSendForm();
