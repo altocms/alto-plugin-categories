@@ -58,11 +58,11 @@
                                 </td>
                                 <td class="center">
                                     <a href="{router page='admin'}content-categories/edit/{$oCategory->getCategoryId()}/">
-                                        <i class="icon-edit tip-top" title="{$aLang.plugin.categories.edit}"></i></a>
+                                        <i class="icon icon-note tip-top" title="{$aLang.plugin.categories.edit}"></i></a>
 
                                     <a onclick="return confirm('{$aLang.plugin.categories.delete_confirm}')"
                                        href="{router page='admin'}content-categories/delete/{$oCategory->getCategoryId()}/?security_key={$ALTO_SECURITY_KEY}">
-                                        <i class="icon-remove tip-top"
+                                        <i class="icon icon-trash tip-top"
                                            title="{$aLang.plugin.categories.delete}"></i></a>
 
                                 </td>
