@@ -129,6 +129,15 @@ class PluginCategories_ActionCategory extends ActionPlugin {
         $this->Viewer_Assign('oCategory', $oCategory);
     }
 
+    public function EventShutdown() {
+        $this->Viewer_Assign(
+            'iCountTopicsNew', 
+            $this->Topic_GetCountTopicsCollectiveNew() + 
+            $this->Topic_GetCountTopicsPersonalNew()
+        );
+    }
+
+
 }
 
 // EOF
