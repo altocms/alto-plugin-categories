@@ -75,7 +75,7 @@ class PluginCategories_ModuleCategory_MapperCategory extends MapperORM {
                 FROM ?_topic AS t
                 INNER JOIN ?_blog AS b ON b.blog_id=t.blog_id AND b.blog_type IN(?a:blog_type)
                 INNER JOIN ?_category_rel AS cr ON cr.blog_id=b.blog_id
-                WHERE topic_publish=1 AND cr.category_id=?:category_id AND ?s:period
+                WHERE topic_publish=1 AND cr.category_id=?:category_id AND ?s:period  AND t.topic_rating >= ?:rating_limit
         ";
         if ($sType == 'new') {
             $sSub .= "
@@ -97,8 +97,8 @@ class PluginCategories_ModuleCategory_MapperCategory extends MapperORM {
             }
             $sql .= "("
                 . str_replace(
-                    array('?:category_id', '?a:blog_type', '?:limit', '?s:period'),
-                    array(intval($iCategoryId), $sBlogTypes, $iLimit, $sPeriod),
+                    array('?:category_id', '?a:blog_type', '?:limit', '?s:period', '?:rating_limit'),
+                    array(intval($iCategoryId), $sBlogTypes, $iLimit, $sPeriod, intval(Config::Get('module.blog.index_good')),
                     $sSub)
                 . ")";
         }
