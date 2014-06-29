@@ -1,6 +1,3 @@
- {* Тема оформления Experience RC1 build 1  для CMS Alto версии 1.0      *}
- {* @licence     Dual licensed under the MIT or GPL Version 2 licenses   *}
-
 {extends file="_index.tpl"}
 
 {block name="layout_vars"}
@@ -10,30 +7,29 @@
 {block name="layout_content"}
 
 {foreach from=$aCategories item=oCategory}
+
     {$aTopics = $oCategory->getTopTopics()}
-    {foreach $aTopics as $oTopic}
+        {foreach from=$aTopics item=oTopic name=foo}
         {$oBlog = $oTopic->getBlog()}
         {$oUser=$oTopic->getUser()}
         {$oBlogType=$oBlog->getBlogType()}
-
+            {if $smarty.foreach.foo.first}
     <!-- Блок новости -->
     <div class="panel panel-default topic topic-news raised">
     <div class="panel-body row">
+
+
+
+
     <!-- Левая колонка -->
     <div class="col-md-12 left-column">
         <!-- Превью -->
-        {$iMainPhotoId = $oTopic->getPhotosetMainPhotoId()}
-        {if $iMainPhotoId}
-            {$aPhotos = $oTopic->getPhotosetPhotos()}
-            {foreach $aPhotos as $oPhoto}
-                {if $oPhoto->getId() == $iMainPhotoId}
+                            {assign var ="sMainPhoto" value=$oTopic->getPreviewImageUrl('x229')}
+                            {if $sMainPhoto}
                     <a href="{$oTopic->getUrl()}" class="topic-preview">
-                        <img src="{$oPhoto->getUrl('x229')}" alt="{$oPhoto->getDescription()}" class="" />
+                                    <img src="{$sMainPhoto}" alt="preview" class="" />
                     </a>
-                    {break}
                 {/if}
-            {/foreach}
-        {/if}
 
 
         <!-- Заголовок -->
@@ -56,12 +52,12 @@
         </div>
         <!-- Контент -->
         <div class="topic-text">
-            {$oTopic->getText()|strip_tags|trim|truncate:200:'...'}
+                                {$oTopic->getIntroText()}
         </div>
         <div class="topic-footer">
             <ul>
                 <li class="topic-user">
-                    <img src="{$oUser->getAvatarUrl(16)}" alt="{$oUser->getDisplayName()}"/>
+                                        <img src="{$oUser->getAvatarUrl(24)}" alt="{$oUser->getDisplayName()}"/>
                     <a class="userlogo link link-dual link-lead link-clear js-popup-{$oUser->getId()}" href="{$oUser->getProfileUrl()}">
                         {$oUser->getDisplayName()}
                     </a>
@@ -74,6 +70,13 @@
                         <span class="favourite-count" id="fav_count_topic_{$oTopic->getId()}">{$oTopic->getCountFavourite()}</span>
                     </a>
                 </li>
+                                    <li class="topic-comments">
+                                        <a href="{$oTopic->getUrl()}#comments" title="{$aLang.topic_comment_read}" class="link link-dark link-lead link-clear">
+                                            <i class="fa fa-comment"></i>
+                                            <span>{$oTopic->getCountComment()}</span>
+                                            {if $oTopic->getCountCommentNew()}<span class="green">+{$oTopic->getCountCommentNew()}</span>{/if}
+                                        </a>
+                                    </li>
                 {$sVoteClass = ""}
                 {if $oVote OR E::UserId()==$oTopic->getUserId() OR strtotime($oTopic->getDateAdd())<$smarty.now-Config::Get('acl.vote.topic.limit_time')}
                     {if $oTopic->getRating() > 0}
@@ -95,69 +98,96 @@
                 {/if}
 
                 <li class="pull-right topic-rating js-vote end" data-target-type="topic" data-target-id="{$oTopic->getId()}">
-                    <a href="#" onclick="return false;" class="vote-down link link-gray link-clear js-vote-down"><i class="fa fa-thumbs-o-down"></i></a>
+                                        <a href="#" onclick="return false;" class="{$sVoteClass} vote-down link link-gray link-clear js-vote-down"><i class="fa fa-thumbs-o-down"></i></a>
                     {if $bVoteInfoShow}
-                        <span class="vote-total js-vote-rating {$sVoteClass}">{if $oTopic->getRating() > 0}+{/if}{$oTopic->getRating()}</span>
+                                            <span
+                                                    data-placement="top"
+                                                    data-original-title='
+
+                            <div id="vote-info-topic-{$oTopic->getId()}">
+                                <ul class="vote-topic-info list-unstyled mal0">
+                                    <li><i class="fa fa-thumbs-o-up"></i><span>{$oTopic->getCountVoteUp()}</span>
+                                    <li><i class="fa fa-thumbs-o-down"></i><span>{$oTopic->getCountVoteDown()}</span>
+                                    <li><i class="fa fa-eye"></i><span>{$oTopic->getCountVoteAbstain()}</span>
+                                    {hook run='topic_show_vote_stats' topic=$oTopic}
+                                </ul>
+                            </div>
+
+                               '
+                                                    data-html="true"
+
+                                                    class="vote-tooltip vote-total js-vote-rating {$sVoteClass}">{if $oTopic->getRating() > 0}+{/if}{$oTopic->getRating()}</span>
                     {else}
-                        <a href="#" class="vote-down link link-gray link-clear" onclick="return ls.vote.vote({$oTopic->getId()},this,0,'topic');">?</a>
+                                            &nbsp;<a href="#"
+                                                     data-placement="top"
+                                                     data-original-title='
+
+                            <div id="vote-info-topic-{$oTopic->getId()}">
+                                <ul class="vote-topic-info list-unstyled mal0">
+                                    <li><i class="fa fa-thumbs-o-up"></i><span>{$oTopic->getCountVoteUp()}</span>
+                                    <li><i class="fa fa-thumbs-o-down"></i><span>{$oTopic->getCountVoteDown()}</span>
+                                    <li><i class="fa fa-eye"></i><span>{$oTopic->getCountVoteAbstain()}</span>
+                                    {hook run='topic_show_vote_stats' topic=$oTopic}
+                                </ul>
+                            </div>
+
+                               '
+                                                     data-html="true"
+                                                     class="vote-tooltip vote-down link link-gray js-vote-rating link-clear" onclick="return ls.vote.vote({$oTopic->getId()},this,0,'topic');">?</a>&nbsp;
                     {/if}
-                    <a href="#" onclick="return false;" class="vote-up link link link-gray link-clear js-vote-up"><i class="fa fa-thumbs-o-up"></i></a>
+                                        <a href="#" onclick="return false;" class="{$sVoteClass} vote-up link link link-gray link-clear js-vote-up"><i class="fa fa-thumbs-o-up"></i></a>
                 </li>
             </ul>
         </div>
     </div>
+
     <!-- Правая колонка -->
     <div class="col-md-12 right-column">
-    {$aTopics = $oCategory->getNewTopics()}
-    {foreach $aTopics as $oNewTopic}
+                {continue}
+            {/if}
         <div class="topic-list-container">
+
             <table class="topic-list">
                 <tr>
-                    <td class="topic-list-rating-container">
-                        <span class="topic-list-rating">{if $oNewTopic->getRating() > 0}+{/if}{$oNewTopic->getRating()}</span>
-                    </td>
                     <td class="topic-list-title-container">
                         <h5 class="topic-list-title accent">
-                            <a href="{$oNewTopic->getUrl()}" class="link link-header link-lead link-dual">
-                                {$oNewTopic->getTitle()|escape:'html'}
+                            <a href="{$oTopic->getUrl()}" class="link link-header link-lead link-dual">
+                                {$oTopic->getTitle()|escape:'html'}
                             </a>
                         </h5>
+                        <span
+                                class="label label-{if $oTopic->getRating() > 0}success{else}danger{/if}">{if $oTopic->getRating() > 0}+{/if}{$oTopic->getRating()}</span>
                     </td>
-                    {$iMainPhotoId = $oNewTopic->getPhotosetMainPhotoId()}
-                    {if $iMainPhotoId}
-                        {$aPhotos = $oNewTopic->getPhotosetPhotos()}
-                        {foreach $aPhotos as $oPhoto}
-                            {if $oPhoto->getId() == $iMainPhotoId}
+                    {assign var ="sMainPhoto" value=$oTopic->getPreviewImageUrl('74crop')}
+                    {if $sMainPhoto}
                                 <td rowspan="2" class="topic-list-preview-container">
-                                    <a href="{$oNewTopic->getUrl()}" class="topic-list-preview">
-                                        <img src="{$oPhoto->getUrl('74crop')}" alt="{$oPhoto->getDescription()}">
+                            <a href="{$oTopic->getUrl()}" class="topic-list-preview">
+                                <img src="{$sMainPhoto}" alt="preview" class="" />
                                     </a>
                                 </td>
-                                {break}
                             {/if}
-                        {/foreach}
-                    {/if}
                 </tr>
                 <tr>
-                    <td colspan="2" class="topic-list-info">
+                    <td class="topic-list-info">
                                     <span class="topic-user">
-                    {$oNewUser = $oNewTopic->getUser()}
-                    <img src="{$oNewUser->getAvatarUrl(16)}" alt="{$oNewUser->getDisplayName()}"/>
+                    {$oNewUser = $oTopic->getUser()}
+                                        <img src="{$oNewUser->getAvatarUrl(24)}" alt="{$oNewUser->getDisplayName()}"/>
                     <a class="userlogo link link-dual link-lead link-clear js-popup-{$oNewUser->getId()}" href="{$oNewUser->getProfileUrl()}">
                         {$oNewUser->getDisplayName()}
                     </a>
                                     </span>
                <span class="topic-date-block">
-                    <span class="topic-date">{$oNewTopic->getDate()|date_format:'d.m.Y'}</span>
-                    <span class="topic-time">{$oNewTopic->getDate()|date_format:"H:i"}</span>
+                    <span class="topic-date">{$oTopic->getDate()|date_format:'d.m.Y'}</span>
+                    <span class="topic-time">{$oTopic->getDate()|date_format:"H:i"}</span>
                 </span>
                     </td>
                 </tr>
             </table>
-        </div>
-    {/foreach}
+
 
     </div>
+            {if $smarty.foreach.foo.last}
+                        </div>
 
 
     </div>
@@ -165,7 +195,7 @@
         <div class="topic-footer">
             <ul>
                 <li class="topic-blog">
-                    <a class="link link-dual link-lead link-clear" href="{$oCategory->getUrl()}">
+                            <a class="link link-dual link-lead link-clear" href="{$oCategory->getLink()}">
                         {$oCategory->getTitle()|escape:'html'}
                     </a>
                 </li>
@@ -184,6 +214,7 @@
             </ul>
         </div>
     </div>
+            {/if}
     {/foreach}
 
 

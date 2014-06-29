@@ -1,6 +1,3 @@
- {* Тема оформления Experience RC1 build 1  для CMS Alto версии 1.0      *}
- {* @licence     Dual licensed under the MIT or GPL Version 2 licenses   *}
-
 {if $oBlog AND $oBlog->getCategory()}
     {$sCategoryUrl=$oBlog->getCategory()->getCategoryUrl()}
 {else}
@@ -11,7 +8,7 @@
 
             {foreach from=$aCategories item=oCategory}
                 <h4 class="panel-header">
-                    <i class="fa fa-suitcase"></i>{$oCategory->getTitle()|escape:'html'}
+                    <i class="fa fa-folder-open-o"></i>{$oCategory->getTitle()|escape:'html'}
                 </h4>
 
 
