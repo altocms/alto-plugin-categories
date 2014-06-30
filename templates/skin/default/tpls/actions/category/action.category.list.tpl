@@ -1,5 +1,11 @@
-{include file='header.tpl' menu='blog'}
+{extends file="_index.tpl"}
 
-{include file='topic_list.tpl'}
+{block name="layout_vars"}
+    {$menu="topics"}
+{/block}
 
-{include file='footer.tpl'}
+{block name="layout_content"}
+
+{include file='topics/topic.list.tpl'}
+
+{/block}
