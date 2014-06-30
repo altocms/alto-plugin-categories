@@ -15,6 +15,8 @@
 
 class PluginCategories_ModuleCategory extends ModuleORM {
 
+    /** @var  PluginCategories_ModuleCategory_MapperCategory */
+    protected $oMapper;
 
     public function Init() {
 

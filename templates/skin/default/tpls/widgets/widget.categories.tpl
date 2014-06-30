@@ -1,6 +1,5 @@
-{if $oBlog AND $oBlog->getCategory()}
-    {$sCategoryUrl=$oBlog->getCategory()->getCategoryUrl()}
-{else}
+{if $oCurrentCategory}
+    {$sCategoryUrl=$oCurrentCategory->getCategoryUrl()}
 {/if}
 <section class="panel panel-default widget widget-type-categories">
     <div class="panel-body">
@@ -9,17 +8,17 @@
             <h3 class="widget-title">{$aLang.plugin.categories.categories}</h3>
         </header>
 
-        <div class="panel-group nav-accordion" id="category-list">
-            {foreach from=$aCategories item=oCategory}
+        <div class="panel-group nav-accordion" id="widget-category-list">
+            {foreach $aCategories as $oCategory}
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#category-list" href="#category-blogs-{$oCategory->getId()}">
+                        <a data-toggle="collapse" data-parent="#widget-category-list" href="#widget-category-blogs-{$oCategory->getId()}">
                             {$oCategory->getTitle()|escape:'html'}
                         </a>
                     </h4>
                 </div>
-                <div id="category-blogs-{$oCategory->getId()}" class="panel-collapse collapse {if $sCategoryUrl==$oCategory->getCategoryUrl()}in{/if}">
+                <div id="widget-category-blogs-{$oCategory->getId()}" class="panel-collapse collapse {if $sCategoryUrl==$oCategory->getCategoryUrl()}in{/if}">
                     <div class="panel-body">
                         {$aBlogs=$oCategory->getBlogs()}
                         {if $aBlogs}

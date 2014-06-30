@@ -1,50 +1,49 @@
-{if $oBlog AND $oBlog->getCategory()}
-    {$sCategoryUrl=$oBlog->getCategory()->getCategoryUrl()}
-{else}
+{if $oCurrentCategory}
+    {$sCategoryUrl=$oCurrentCategory->getCategoryUrl()}
 {/if}
-<div class="panel panel-default sidebar raised">
-    <div class="panel-body">
-        <div class="panel-content js-widget-blogs-content">
 
-            {foreach from=$aCategories item=oCategory}
+<div class="panel panel-default sidebar raised widget-type-categories">
+    <div class="panel-body">
+
+            <div class="panel-group nav-accordion" id="widget-category-list">
+                {foreach $aCategories as $oCategory}
                 <h4 class="panel-header">
-                    <i class="fa fa-folder-open-o"></i>{$oCategory->getTitle()|escape:'html'}
+                    <a data-toggle="collapse" data-parent="#widget-category-list" href="#category-blogs-{$oCategory->getId()}">
+                        <i class="fa fa-folder-open-o"></i>{$oCategory->getTitle()|escape:'html'}
+                    </a>
                 </h4>
 
+                <div id="category-blogs-{$oCategory->getId()}" class="panel-collapse collapse {if $sCategoryUrl==$oCategory->getCategoryUrl()}in{/if}">
+                    <div class="panel-content">
+                    {$aBlogs=$oCategory->getBlogs()}
+                    {if $aBlogs}
+                        {if $aWidgetParams.simple}
+                            <ul class="blogs-list">
+                                <li>
+                                    {foreach $aBlogs as $oBlog}
+                                    <a href="{$oBlog->getUrlFull()}" class="blog-name link link-dual link-lead link-clear">
+                                        {$sPath = $oBlog->getAvatarPath(24)}
+                                        {if $sPath}
+                                            <img src="{$oBlog->getAvatarPath(24)}" width="24" height="24" class="avatar uppercase"/>
+                                        {else}
+                                            <i class="fa fa-folder"></i>
+                                        {/if}
 
-
-                    <div id="category-blogs-{$oCategory->getId()}" class="panel-content collapse {if $sCategoryUrl==$oCategory->getCategoryUrl()}in{/if}">
-                            {$aBlogs=$oCategory->getBlogs()}
-                            {if $aBlogs}
-                                {if $aWidgetParams.simple}
-                                    <ul class="blogs-list">
-                                        <li>
-                                        {foreach $aBlogs as $oBlog}
-                                            <a href="{$oBlog->getUrlFull()}" class="blog-name link link-dual link-lead link-clear">
-                                                {$sPath = $oBlog->getAvatarPath(24)}
-                                                {if $sPath}
-                                                    <img src="{$oBlog->getAvatarPath(24)}" width="24" height="24" class="avatar uppercase"/>
-                                                {else}
-                                                    <i class="fa fa-folder"></i>
-                                                {/if}
-
-                                                {$oBlog->getTitle()|escape:'html'}
-                                                <span class="topic-count">{$oBlog->getRating()}</span>
-                                            </a>
-                                        {/foreach}
-                                        </li>
-                                    </ul>
-                                {else}
-                                    {include file="widgets/widget.blogs_top.tpl"}
-                                {/if}
-                            {/if}
+                                        {$oBlog->getTitle()|escape:'html'}
+                                        <span class="topic-count">{$oBlog->getRating()}</span>
+                                    </a>
+                                    {/foreach}
+                                </li>
+                            </ul>
+                        {else}
+                            {include file="widgets/widget.blogs_top.tpl"}
+                        {/if}
+                    {/if}
                     </div>
+                </div>
+                {/foreach}
+            </div>
 
-            {/foreach}
-
-
-
-        </div>
     </div>
     <div class="panel-footer">
         <ul>

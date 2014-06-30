@@ -26,6 +26,7 @@ class PluginCategories extends Plugin {
         = array(
             'action' => array(
                 'ActionAdmin',
+                'ActionBlog',
             ),
             'module' => array(
                 'ModuleCategory',

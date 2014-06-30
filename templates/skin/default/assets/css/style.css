@@ -30,3 +30,7 @@
 .widget-type-stream .category-blogs-simple li {
     padding: 4px 0 0 10px;
 }
+
+.widget-type-categories a[data-toggle=collapse] {
+    display: block;
+}
