@@ -15,6 +15,11 @@
 
 class PluginCategories_ModuleCategory_MapperCategory extends MapperORM {
 
+    /**
+     * @param $aBlogId
+     *
+     * @return array
+     */
     public function GetCategoriesByBlogId($aBlogId) {
 
         $sql = "
@@ -43,6 +48,12 @@ class PluginCategories_ModuleCategory_MapperCategory extends MapperORM {
         return array();
     }
 
+    /**
+     * @param string $sType
+     * @param array  $aFilter
+     *
+     * @return array
+     */
     public function GetCategoryTopicsId($sType, $aFilter) {
 
         if (!isset($aFilter['category_id'])) {
@@ -54,7 +65,7 @@ class PluginCategories_ModuleCategory_MapperCategory extends MapperORM {
         }
         if (isset($aFilter['period']) && $aFilter['period']) {
             $sDate = F::DateTimeSub('P' . ($aFilter['period'] + 1) . 'D');
-            $sPeriod = "((CASE WHEN topic_date_show IS NULL THEN topic_date_add ELSE topic_date_show END)<'" . $sDate . "')";
+            $sPeriod = "((CASE WHEN topic_date_show IS NULL THEN topic_date_add ELSE topic_date_show END)>'" . $sDate . "')";
         } else {
             $sPeriod = '(1=1)';
         }
@@ -66,6 +77,12 @@ class PluginCategories_ModuleCategory_MapperCategory extends MapperORM {
             $sBlogTypes .= "'" . $sBlogType . "'";
         }
 
+        if (isset($aFilter['rating'])) {
+            $sRating = 't.topic_rating>=' . intval($aFilter['rating']);
+        } else {
+            $sRating = '1=1';
+        }
+
         $iLimit = intval($aFilter['limit']);
         $sSub = "
                 SELECT
@@ -75,7 +92,11 @@ class PluginCategories_ModuleCategory_MapperCategory extends MapperORM {
                 FROM ?_topic AS t
                 INNER JOIN ?_blog AS b ON b.blog_id=t.blog_id AND b.blog_type IN(?a:blog_type)
                 INNER JOIN ?_category_rel AS cr ON cr.blog_id=b.blog_id
-                WHERE topic_publish=1 AND cr.category_id=?:category_id AND ?s:period
+                WHERE
+                      t.topic_publish=1
+                      AND ?s:rating
+                      AND cr.category_id=?:category_id
+                      AND ?s:period
         ";
         if ($sType == 'new') {
             $sSub .= "
@@ -97,8 +118,8 @@ class PluginCategories_ModuleCategory_MapperCategory extends MapperORM {
             }
             $sql .= "("
                 . str_replace(
-                    array('?:category_id', '?a:blog_type', '?:limit', '?s:period'),
-                    array(intval($iCategoryId), $sBlogTypes, $iLimit, $sPeriod),
+                    array('?:category_id', '?a:blog_type', '?:limit', '?s:period', '?s:rating'),
+                    array(intval($iCategoryId), $sBlogTypes, $iLimit, $sPeriod, $sRating),
                     $sSub)
                 . ")";
         }

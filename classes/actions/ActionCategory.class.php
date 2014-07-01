@@ -52,6 +52,12 @@ class PluginCategories_ActionCategory extends ActionPlugin {
                     'limit' => Config::Get('plugin.categories.topic_new_number'),
                 ),
             );
+            if (!is_null($iRating = Config::Get('plugin.categories.topic_top_rating')) && is_numeric($iRating)) {
+                $aFilter['top']['rating'] = $iRating;
+            }
+            if (!is_null($iRating = Config::Get('plugin.categories.topic_new_rating')) && is_numeric($iRating)) {
+                $aFilter['new']['rating'] = $iRating;
+            }
 
             $aCategoryHomeTopics = $this->Category_GetHomeTopics($aFilter);
             $aCategoryTopTopics = (isset($aCategoryHomeTopics['top']) ? $aCategoryHomeTopics['top'] : array());
