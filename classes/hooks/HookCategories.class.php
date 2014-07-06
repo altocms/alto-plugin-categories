@@ -42,12 +42,12 @@ class PluginCategories_HookCategories extends Hook {
 
         $sHomePageSelect = Config::Get('router.config.homepage_select');
         $this->Viewer_Assign('sHomePageSelect', $sHomePageSelect);
-        return $this->Viewer_Fetch(Plugin::GetTemplatePath(__CLASS__) . 'tpls/hook.admin_select_homepage.tpl');
+        return $this->Viewer_Fetch(Plugin::GetTemplateDir(__CLASS__) . 'tpls/hook.admin_select_homepage.tpl');
     }
 
     public function TplAdminMenuContent() {
 
-        return $this->Viewer_Fetch(Plugin::GetTemplatePath(__CLASS__) . 'tpls/hook.admin_menu_content.tpl');
+        return $this->Viewer_Fetch(Plugin::GetTemplateDir(__CLASS__) . 'tpls/hook.admin_menu_content.tpl');
     }
 }
 
