@@ -3,7 +3,7 @@
 {/if}
 
 <div class="panel panel-default sidebar raised widget-type-categories">
-    <div class="panel-body">
+    <div class="panel-body" style="padding-bottom: 14px;">
 
             <div class="panel-group nav-accordion" id="widget-category-list">
                 {foreach $aCategories as $oCategory}
@@ -18,9 +18,9 @@
                     {$aBlogs=$oCategory->getBlogs()}
                     {if $aBlogs}
                         {if $aWidgetParams.simple}
-                            <ul class="blogs-list">
-                                <li>
-                                    {foreach $aBlogs as $oBlog}
+                            <ul class="blogs-list" style="margin-bottom: 12px;">
+                                {foreach $aBlogs as $oBlog}
+                                <li style="border-bottom: 0">
                                     <a href="{$oBlog->getUrlFull()}" class="blog-name link link-dual link-lead link-clear">
                                         {$sPath = $oBlog->getAvatarPath(24)}
                                         {if $sPath}
@@ -32,8 +32,8 @@
                                         {$oBlog->getTitle()|escape:'html'}
                                         <span class="topic-count">{$oBlog->getRating()}</span>
                                     </a>
-                                    {/foreach}
                                 </li>
+                                {/foreach}
                             </ul>
                         {else}
                             {include file="widgets/widget.blogs_top.tpl"}
@@ -47,7 +47,7 @@
     </div>
     <div class="panel-footer">
         <ul>
-            <li></li>
+            <li>&nbsp;</li>
         </ul>
     </div>
 </div>
