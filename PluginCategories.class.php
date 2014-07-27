@@ -31,6 +31,7 @@ class PluginCategories extends Plugin {
             'module' => array(
                 'ModuleCategory',
                 'ModuleBlog',
+                'ModuleMenu',
             ),
             'mapper' => array(
                 'ModuleCategory_MapperCategory',

@@ -80,6 +80,29 @@ class PluginCategories_ModuleCategory extends ModuleORM {
         return $this->oMapper->GetCategoriesByBlogId($aBlogId);
     }
 
+    public function GetCategoriesByUrl($aUrls) {
+
+        $sCacheKey = 'categories_by_url_' . serialize($aUrls);
+        if (false === ($aCategories = $this->Cache_Get($sCacheKey))) {
+            $aCategories = $this->GetCategoryItemsByCategoryUrlIn($aUrls);
+            $aOrders = array_flip($aUrls);
+            foreach($aCategories as $oCategory) {
+                $oCategory->setProp('_order', $aOrders[$oCategory->getUrl()]);
+            }
+            $aCategories = F::Array_SortEntities($aCategories, '_order');
+            $this->Cache_Set($aCategories, $sCacheKey, 'category_update', 'P30D');
+        }
+        return $aCategories;
+    }
+
+    public function _sortByTmpOrders($oEntity1, $oEntity2) {
+
+        if ($oEntity1->getProp('_order') == $oEntity2->getProp('_order')) {
+            return 0;
+        }
+        return ($oEntity1->getProp('_order') < $oEntity2->getProp('_order')) ? -1 : 1;
+    }
+
     /**
      * @param array $aFilter
      * @param bool  $bIdOnly
