@@ -79,6 +79,10 @@ class PluginCategories_ActionCategory extends ActionPlugin {
             }
 
         }
+        Config::Set(
+            'plugin.topicintro.preview.size.category-home',
+            Config::Get('plugin.categories.preview.size.category-home')
+        );
         $this->Viewer_Assign('aCategories', $aCategories);
     }
 

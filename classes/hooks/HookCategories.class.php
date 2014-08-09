@@ -25,17 +25,8 @@ class PluginCategories_HookCategories extends Hook {
         $this->AddHook('template_admin_select_homepage', 'TplAdminSelectHomepage');
 
         // Пункт меню админки
-        $this->AddHook('template_admin_menu_content', 'TplAdminMenuContent');
+        $this->AddHook('template_admin_menu_content', 'TplAdminMenuContent', null, 10);
 
-        //подключаем размеры mainpreview
-        $this->AddHook('init_action', 'InitAction');
-    }
-
-    public function InitAction() {
-
-        if (in_array('mainpreview', $this->Plugin_GetActivePlugins())) {
-            $this->Category_InitConfigMainPreview();
-        }
     }
 
     public function TplAdminSelectHomepage() {

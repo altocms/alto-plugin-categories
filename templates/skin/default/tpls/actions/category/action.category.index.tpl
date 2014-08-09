@@ -6,16 +6,11 @@
 
 {block name="layout_content"}
 
-    <div class="category">
-        <header class="category-header">
-            <h1 class="category-title"></h1>
-        </header>
-    </div>
 {foreach from=$aCategories item=oCategory}
 
 <section class="category-home">
-    <header class="category-home-header">
-        <h3><a href="{$oCategory->getUrl()}">{$oCategory->getTitle()|escape:'html'}</a></h3>
+    <header class="category-home-header panel panel-default">
+        <h3 class="panel-body"><a href="{$oCategory->getUrl()}">{$oCategory->getTitle()|escape:'html'}</a></h3>
     </header>
 
     <div class="row">
@@ -27,7 +22,7 @@
                 <div class="panel panel-default category-home-topic-panel">
                     <header class="topic-header">
                         {if $oTopic->getPreviewImage()}
-                            <img src="{$oTopic->getPreviewImageWebPath('229crop')}" alt="image" />
+                            <img src="{$oTopic->getPreviewImageUrl('category-home')}" alt="image" style="{$oTopic->getPreviewImageSizeStyle('category-home')}" />
                         {/if}
                         <h4 class="category-home-topic-title">
                             <a title="{$oTopic->getTitle()|escape:'html'}" href="{$oTopic->getUrl()}">{$oTopic->getTitle()|escape:'html'}</a>
@@ -40,18 +35,20 @@
             {/foreach}
             </div>
         </div>
-        <div class="col-sm-4 panel panel-default">
-            <h4>{$aLang.plugin.categories.new}</h4>
+        <div class="col-sm-4">
+            <div class="panel panel-default category-home-topic-panel">
+                <h4>{$aLang.plugin.categories.new}</h4>
 
-            <ul class="list-unstyled ">
-                {$aTopics = $oCategory->getNewTopics()}
-                {foreach $aTopics as $oTopic}
-                    <li class="category-home-item">
-                        <a href="{$oTopic->getUrl()}" class="top-topic-link">{$oTopic->getTitle()|escape:'html'}</a>
-                        <time class="category-home-topic-date text-muted" datetime="{date_format date=$oTopic->getDateAdd() format='c'}" title="{date_format date=$oTopic->getDateAdd() format='j/m, H:i'}">{date_format date=$oTopic->getDateAdd() format="j.m, H:i"}</time>
-                    </li>
-                {/foreach}
-            </ul>
+                <ul class="list-unstyled ">
+                    {$aTopics = $oCategory->getNewTopics()}
+                    {foreach $aTopics as $oTopic}
+                        <li class="category-home-item">
+                            <a href="{$oTopic->getUrl()}" class="top-topic-link">{$oTopic->getTitle()|escape:'html'}</a>
+                            <time class="category-home-topic-date text-muted" datetime="{date_format date=$oTopic->getDateAdd() format='c'}" title="{date_format date=$oTopic->getDateAdd() format='j/m, H:i'}">{date_format date=$oTopic->getDateAdd() format="j.m, H:i"}</time>
+                        </li>
+                    {/foreach}
+                </ul>
+            </div>
         </div>
         <div class="clearfix"></div>
     </div>

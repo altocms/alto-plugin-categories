@@ -13,13 +13,6 @@
  * @since   0.9.5
  */
 
-/**
- * Запрещаем напрямую через браузер обращение к этому файлу.
- */
-if (!class_exists('Plugin')) {
-    die('Hacking attempt!');
-}
-
 class PluginCategories extends Plugin {
 
     protected $aInherits
@@ -49,7 +42,7 @@ class PluginCategories extends Plugin {
      */
     public function Activate() {
 
-        $this->ExportSQL(__DIR__ . '/dump.sql');
+        $this->ExportSQL(__DIR__ . '/install/db/dump.sql');
         return true;
     }
 
