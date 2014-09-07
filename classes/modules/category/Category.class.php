@@ -37,7 +37,7 @@ class PluginCategories_ModuleCategory extends ModuleORM {
     }
 
     /**
-     * @param $aFile
+     * @param array $aFile
      *
      * @return bool
      */
@@ -57,7 +57,7 @@ class PluginCategories_ModuleCategory extends ModuleORM {
     }
 
     /**
-     * @param $oCategory
+     * @param object $oCategory
      *
      * @return bool
      */
@@ -67,19 +67,30 @@ class PluginCategories_ModuleCategory extends ModuleORM {
         if ($sUrl = $oCategory->getAvatar()) {
             return $this->Img_Delete($this->Uploader_Url2Dir($sUrl));
         }
+        return true;
     }
 
     /**
-     * @param $aBlogId
+     * @param array $aBlogsId
      *
-     * @return mixed
+     * @return array
      */
-    public function GetCategoriesByBlogId($aBlogId) {
+    public function GetCategoriesByBlogId($aBlogsId) {
 
-        $aBlogId = $this->_entitiesId($aBlogId);
-        return $this->oMapper->GetCategoriesByBlogId($aBlogId);
+        $aBlogsId = $this->_entitiesId($aBlogsId);
+        if ($aBlogsId) {
+            $aResult = $this->oMapper->GetCategoriesByBlogId($aBlogsId);
+        } else {
+            $aResult = array();
+        }
+        return $aResult;
     }
 
+    /**
+     * @param array $aUrls
+     *
+     * @return array
+     */
     public function GetCategoriesByUrl($aUrls) {
 
         $sCacheKey = 'categories_by_url_' . serialize($aUrls);
@@ -95,6 +106,12 @@ class PluginCategories_ModuleCategory extends ModuleORM {
         return $aCategories;
     }
 
+    /**
+     * @param $oEntity1
+     * @param $oEntity2
+     *
+     * @return int
+     */
     public function _sortByTmpOrders($oEntity1, $oEntity2) {
 
         if ($oEntity1->getProp('_order') == $oEntity2->getProp('_order')) {
