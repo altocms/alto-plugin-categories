@@ -15,16 +15,40 @@
 
 class PluginCategories_ModuleBlog_EntityBlog extends PluginCategories_Inherits_ModuleBlog_EntityBlog {
 
-    public function getCategory() {
+    /**
+     * Returns required category of blog or the first category
+     *
+     * @param int|object $xCategory
+     *
+     * @return object|null
+     */
+    public function getCategory($xCategory = null) {
 
-        $xResult = $this->getProp('category');
+        if ($xCategory) {
+            if (is_object($xCategory)) {
+                $iCategoryId = $xCategory->getId();
+            } else {
+                $iCategoryId = intval($xCategory);
+            }
+        } else {
+            $iCategoryId = 0;
+        }
+        $xResult = $this->getProp('category_' . $iCategoryId);
         if (is_null($xResult)) {
+            $xResult = null;
             $aCategories = $this->getCategories();
             if (is_array($aCategories) && count($aCategories)) {
-                $xResult = array_shift($aCategories);
+                if ($iCategoryId) {
+                    if (isset($aCategories[$iCategoryId])) {
+                        $xResult = $aCategories[$iCategoryId];
+                    }
+                } else {
+                    $xResult = reset($aCategories);
+                }
             }
+            $this->setProp('category_' . $iCategoryId, $xResult ? $xResult : false);
         }
-        return $xResult;
+        return $xResult ? $xResult : null;
     }
 
 }

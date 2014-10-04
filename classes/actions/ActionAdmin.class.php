@@ -110,6 +110,13 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
             // * Обрабатываем отправку формы
             return $this->SubmitCategoriesAdd();
         }
+        if (!Config::Get('plugin.categories.multicategory')) {
+            foreach ($aBlogs as $oBlog) {
+                if ($oBlog->getCategories()) {
+                    $_REQUEST['blog'][$oBlog->getId()] = $oBlog->getId();
+                }
+            }
+        }
         return null;
     }
 
@@ -182,9 +189,17 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
             $_REQUEST['category_url'] = $oCategory->getCategoryUrl();
             $_REQUEST['category_avatar'] = $oCategory->getCategoryAvatar();
 
-            $aRelations = $this->Category_GetItemsByFilter(array('category_id' => $iCategoryId), 'Category_CategoryRel');
-            foreach ($aRelations as $oRel) {
-                $_REQUEST['blog'][$oRel->getBlogId()] = $oRel->getBlogId();
+            if (!Config::Get('plugin.categories.multicategory')) {
+                foreach ($aBlogs as $oBlog) {
+                    if ($oBlog->getCategories()) {
+                        $_REQUEST['blog'][$oBlog->getId()] = $oBlog->getId();
+                    }
+                }
+            } else {
+                $aRelations = $this->Category_GetItemsByFilter(array('category_id' => $iCategoryId), 'Category_CategoryRel');
+                foreach ($aRelations as $oRel) {
+                    $_REQUEST['blog'][$oRel->getBlogId()] = $oRel->getBlogId();
+                }
             }
         }
         return null;

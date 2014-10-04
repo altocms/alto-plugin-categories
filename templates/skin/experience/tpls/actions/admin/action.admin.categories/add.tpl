@@ -76,18 +76,21 @@
                                 {foreach $aBlogs AS $oBlog}
                                     {$iBlogId = $oBlog->getId()}
                                     {$aBlogCategories = $oBlog->getCategories()}
-                                    {$bDisabled = $aBlogCategories AND !Config::Get('plugin.categories.multicategory')}
+                                    {$bDisabled = $aBlogCategories AND !Config::Get('plugin.categories.multicategory') AND (!$oCategory OR !$oBlog->getCategory($oCategory))}
                                     <label {if $bDisabled}class="i-disabled"{/if}>
                                         <input type="checkbox" name="blog[{$iBlogId}]" value="1"
                                                 {if $_aRequest.blog.$iBlogId}checked{/if}
                                                 {if $bDisabled}disabled="disabled" {/if}
                                                 class="input-text"/>
-                                        - {$oBlog->getTitle()|escape}
+                                        -
+                                        {if $aBlogCategories}<strong>{/if}
+                                        {$oBlog->getTitle()|escape}
                                         {if $aBlogCategories}
-                                            ({foreach $aBlogCategories AS $oCategory}
-                                                {$oCategory->getTitle()}{if !$oCategory@last},{/if}
+                                            ({foreach $aBlogCategories AS $oBlogCategory}
+                                                {$oBlogCategory->getTitle()}{if !$oBlogCategory@last},{/if}
                                             {/foreach})
                                         {/if}
+                                        {if $aBlogCategories}</strong>{/if}
                                     </label>
                                 {/foreach}
                             {else}
