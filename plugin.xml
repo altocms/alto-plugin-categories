@@ -8,7 +8,7 @@
         <lang name="default">Alto CMS Team</lang>
     </author>
     <homepage>http://altocms.com</homepage>
-    <version>1.1.4</version>
+    <version>1.1.5</version>
     <dirname>categories</dirname>
     <requires>
         <alto>

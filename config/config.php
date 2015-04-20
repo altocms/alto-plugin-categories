@@ -89,6 +89,7 @@ $config['widgets'][] = array(
     'priority' => 150,
     'plugin'   => 'categories',
     'action'   => array(
+        'index',
         'filter',
         'blogs',
         'blog' => array('{topics}', '{topic}', '{blog}'),

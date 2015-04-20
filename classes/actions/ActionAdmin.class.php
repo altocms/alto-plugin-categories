@@ -28,6 +28,14 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
         $this->AddEventPreg('/^content-categories$/i', 'EventCategories');
     }
 
+    protected function _getBlogs() {
+
+        $aResult = $this->Blog_GetBlogsByFilter(
+            array('exclude_type' => 'personal'), array('blog_rating' => 'desc'), 1, PHP_INT_MAX
+        );
+        return $aResult['collection'];
+    }
+
     /**
      * Установка собственного обработчика главной страницы
      *
@@ -97,10 +105,7 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
         // * Загружаем переменные в шаблон
         $this->Viewer_AddHtmlTitle($this->Lang_Get('plugin.categories.add_title'));
 
-        $aResult = $this->Blog_GetBlogsByFilter(
-            array('type' => 'open'), array('blog_rating' => 'desc'), 1, PHP_INT_MAX
-        );
-        $aBlogs = $aResult['collection'];
+        $aBlogs = $this->_getBlogs();
         $this->Viewer_Assign('aBlogs', $aBlogs);
 
         $aLangList = $this->Lang_GetLangList();
@@ -173,10 +178,7 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
         $this->_setTitle($this->Lang_Get('plugin.categories.edit_title'));
         $this->SetTemplateAction('categories/add');
 
-        $aResult = $this->Blog_GetBlogsByFilter(
-            array('type' => 'open'), array('blog_rating' => 'desc'), 1, PHP_INT_MAX
-        );
-        $aBlogs = $aResult['collection'];
+        $aBlogs = $this->_getBlogs();
         $this->Viewer_Assign('aBlogs', $aBlogs);
 
         // * Проверяем отправлена ли форма с данными

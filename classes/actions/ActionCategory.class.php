@@ -130,7 +130,7 @@ class PluginCategories_ActionCategory extends ActionPlugin {
         // * Формируем постраничность
         $aPaging = $this->Viewer_MakePaging(
             $aResult['count'], $iPage, Config::Get('module.topic.per_page'), Config::Get('pagination.pages.count'),
-            rtrim($oCategory->getUrl(), '/')
+            rtrim($oCategory->getLink(), '/')
         );
 
         // * Загружаем переменные в шаблон
