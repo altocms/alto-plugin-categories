@@ -44,6 +44,14 @@ return array(
     //
     'category_title_error'          => 'Проверьте заголовок категории',
     'category_url_error'            => 'Проверьте URL категории',
+
+    //
+    'new_blog_category'             => 'Выберите категорию',
+    'new_blog_category_notice'      => 'Категория, в которую будет добавлен новый блог',
+
+    //
+    'edit_blog_category'             => 'Категория блога',
+    'edit_blog_category_notice'      => 'Вы можете изменить категорию блога',
 );
 
 // EOF

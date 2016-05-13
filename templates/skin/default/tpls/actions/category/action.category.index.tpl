@@ -10,7 +10,7 @@
 
 <section class="category-home">
     <header class="category-home-header panel panel-default">
-        <h3 class="panel-body"><a href="{$oCategory->getUrl()}">{$oCategory->getTitle()|escape:'html'}</a></h3>
+        <h3 class="panel-body"><a href="{$oCategory->getLink()}">{$oCategory->getTitle()|escape:'html'}</a></h3>
     </header>
 
     <div class="row">

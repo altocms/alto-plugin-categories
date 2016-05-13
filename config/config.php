@@ -8,14 +8,14 @@
  *----------------------------------------------------------------------------
  */
 
-/**
- * @package plugin Categories
- * @since   0.9.5
- */
+$config = array();
 
 $config = array();
 
 $config['multicategory'] = false;   // один блог может быть включен в несколько категорий
+
+$config['select_category'] = true;  // возможность выбирать категорию при создании блога; действует, только если параметр multicategory = false
+$config['change_category'] = 0;  // возможность изменить категорию при редактировании блога; действует, только если параметр multicategory = false
 
 /*
  * Параметры для формирования главной плагина Категории
@@ -36,10 +36,7 @@ $config['preview']['size'] = array(
 );
 
 // Прямой эфир
-$config['widgets'][] = array(
-    'name'     => 'stream', // исполняемый виджет Stream
-    'group'    => 'right', // группа, куда нужно добавить виджет
-    'priority' => 100, // приоритет
+$config['widgets']['stream'] = array(
     'action'   => array(
         'index',
         'filter',
@@ -48,19 +45,10 @@ $config['widgets'][] = array(
         'tag',
         'category',
     ),
-    'params' => array(
-        'items' => array(
-            'comments' => array('text' => 'widget_stream_comments', 'type'=>'comment'),
-            'topics' => array('text' => 'widget_stream_topics', 'type'=>'topic'),
-        ),
-    ),
 );
 
 // Теги
-$config['widgets'][] = array(
-    'name'     => 'tags',
-    'group'    => 'right',
-    'priority' => 50,
+$config['widgets']['tags'] = array(
     'action'   => array(
         'index',
         'filter',
@@ -71,10 +59,7 @@ $config['widgets'][] = array(
 );
 
 // Блоги
-$config['widgets'][] = array(
-    'name'     => 'blogs',
-    'group'    => 'right',
-    'priority' => 1,
+$config['widgets']['blogs'] = array(
     'action'   => array(
         'index',
         'filter',
@@ -83,7 +68,7 @@ $config['widgets'][] = array(
 );
 
 // Категории
-$config['widgets'][] = array(
+$config['widgets']['categories'] = array(
     'name'     => 'categories',
     'group'    => 'right',
     'priority' => 150,

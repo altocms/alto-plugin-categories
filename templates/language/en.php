@@ -44,6 +44,10 @@ return array(
     //
     'category_title_error'          => 'Please, check title of category',
     'category_url_error'            => 'Please, check URL of category',
+
+    //
+    'new_blog_category'             => 'Choose a category',
+    'new_blog_category_notice'      => 'Choose a category in which the new blog will be added',
 );
 
 // EOF
