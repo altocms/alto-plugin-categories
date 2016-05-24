@@ -31,9 +31,9 @@ class PluginCategories_ModuleMenu extends PluginCategories_Inherits_ModuleMenu {
         $aItems = array();
         $aCategories = array();
         if ($aFillSet) {
-            $aCategories = $this->Category_GetCategoriesByUrl($aFillSet);
+            $aCategories = E::Module('Category')->GetCategoriesByUrl($aFillSet);
         } else {
-            $aCategories = $this->Category_GetItemsByFilter(array(), 'Category');
+            $aCategories = E::Module('Category')->GetItemsByFilter(array(), 'Category');
         }
         if ($aCategories) {
             foreach($aCategories as $oCategory) {

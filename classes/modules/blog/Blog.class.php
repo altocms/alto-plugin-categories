@@ -26,7 +26,7 @@ class PluginCategories_ModuleBlog extends PluginCategories_Inherits_ModuleBlog {
 
         $aBlogs = parent::GetBlogsAdditionalData($aBlogId, $aAllowData, $aOrder);
         if ($aBlogs && isset($this->aAdditionalData)) {
-            $aCategories = $this->Category_GetCategoriesByBlogId($aBlogId);
+            $aCategories = E::Module('Category')->GetCategoriesByBlogId($aBlogId);
             foreach ($aCategories as $iBlogId => $aBlogCategories) {
                 if (isset($aBlogs[$iBlogId])) {
                     $aBlogs[$iBlogId]->setCategories($aBlogCategories);

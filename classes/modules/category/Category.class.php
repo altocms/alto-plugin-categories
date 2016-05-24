@@ -27,13 +27,13 @@ class PluginCategories_ModuleCategory extends ModuleORM {
 
         Config::Set(
             'plugin.mainpreview.size_images_preview', array_merge(
-                Config::Get('plugin.mainpreview.size_images_preview'),
-                Config::Get('plugin.categories.size_images_preview')
+                C::Get('plugin.mainpreview.size_images_preview'),
+                C::Get('plugin.categories.size_images_preview')
             )
         );
 
-        Config::Set('plugin.mainpreview.preview_minimal_size_width', Config::Get('plugin.categories.preview_size_w'));
-        Config::Set('plugin.mainpreview.preview_minimal_size_height', Config::Get('plugin.categories.preview_size_h'));
+        Config::Set('plugin.mainpreview.preview_minimal_size_width', C::Get('plugin.categories.preview_size_w'));
+        Config::Set('plugin.mainpreview.preview_minimal_size_height', C::Get('plugin.categories.preview_size_h'));
     }
 
     /**
@@ -43,11 +43,11 @@ class PluginCategories_ModuleCategory extends ModuleORM {
      */
     public function UploadCategoryAvatar($aFile) {
 
-        $sFileTmp = $this->Uploader_UploadLocal($aFile);
-        if ($sFileTmp && ($oImg = $this->Img_CropSquare($sFileTmp))) {
-            $sFile = $this->Uploader_Uniqname($this->Uploader_GetUserImageDir(), strtolower(pathinfo($sFileTmp, PATHINFO_EXTENSION)));
+        $sFileTmp = E::Module('Uploader')->UploadLocal($aFile);
+        if ($sFileTmp && ($oImg = E::Module('Img')->CropSquare($sFileTmp))) {
+            $sFile = E::Module('Uploader')->Uniqname(E::Module('Uploader')->GetUserImageDir(), strtolower(pathinfo($sFileTmp, PATHINFO_EXTENSION)));
             if ($oImg->Save($sFile)) {
-                return $this->Uploader_Dir2Url($sFile);
+                return E::Module('Uploader')->Dir2Url($sFile);
             }
             F::File_Delete($sFile);
         }
@@ -65,7 +65,7 @@ class PluginCategories_ModuleCategory extends ModuleORM {
 
         // * Если аватар есть, удаляем его и его рейсайзы
         if ($sUrl = $oCategory->getAvatar()) {
-            return $this->Img_Delete($this->Uploader_Url2Dir($sUrl));
+            return E::Module('Img')->Delete(E::Module('Uploader')->Url2Dir($sUrl));
         }
         return true;
     }
@@ -94,14 +94,14 @@ class PluginCategories_ModuleCategory extends ModuleORM {
     public function GetCategoriesByUrl($aUrls) {
 
         $sCacheKey = 'categories_by_url_' . serialize($aUrls);
-        if (false === ($aCategories = $this->Cache_Get($sCacheKey))) {
+        if (false === ($aCategories = E::Module('Cache')->Get($sCacheKey))) {
             $aCategories = $this->GetCategoryItemsByCategoryUrlIn($aUrls);
             $aOrders = array_flip($aUrls);
             foreach($aCategories as $oCategory) {
                 $oCategory->setProp('_order', $aOrders[$oCategory->getUrl()]);
             }
             $aCategories = F::Array_SortEntities($aCategories, '_order');
-            $this->Cache_Set($aCategories, $sCacheKey, 'category_update', 'P30D');
+            E::Module('Cache')->Set($aCategories, $sCacheKey, 'category_update', 'P30D');
         }
         return $aCategories;
     }
@@ -129,10 +129,10 @@ class PluginCategories_ModuleCategory extends ModuleORM {
     public function GetTopTopics($aFilter = array(), $bIdOnly = false) {
 
         if (!isset($aFilter['blog_type'])) {
-            $aFilter['blog_type'] = $this->Blog_GetOpenBlogTypes();
+            $aFilter['blog_type'] = E::Module('Blog')->GetOpenBlogTypes();
         }
         if (!isset($aFilter['period'])) {
-            $aFilter['period'] = intval(Config::Get('plugin.categories.topic_top_period'));
+            $aFilter['period'] = intval(C::Get('plugin.categories.topic_top_period'));
         }
         $aCategoryTopicsId = $this->oMapper->GetCategoryTopicsId('top', $aFilter);
         if ($bIdOnly) {
@@ -151,7 +151,7 @@ class PluginCategories_ModuleCategory extends ModuleORM {
     public function GetNewTopics($aFilter = array(), $bIdOnly = false) {
 
         if (!isset($aFilter['blog_type'])) {
-            $aFilter['blog_type'] = $this->Blog_GetOpenBlogTypes();
+            $aFilter['blog_type'] = E::Module('Blog')->GetOpenBlogTypes();
         }
         $aCategoryTopicsId = $this->oMapper->GetCategoryTopicsId('new', $aFilter);
         if ($bIdOnly) {
@@ -197,7 +197,7 @@ class PluginCategories_ModuleCategory extends ModuleORM {
             }
         }
         if ($aTopicsId) {
-            $aTopics = $this->Topic_GetTopicsAdditionalData($aTopicsId, array('user' => array(), 'blog' => array()));
+            $aTopics = E::Module('Topic')->GetTopicsAdditionalData($aTopicsId, array('user' => array(), 'blog' => array()));
             foreach ($aCategoryTopicsId as $sType => $aCatTypeTopicsId) {
                 foreach ($aCatTypeTopicsId as $iCategoryId => $aCatTopicsId) {
                     foreach ($aCatTopicsId as $iTopicId) {

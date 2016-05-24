@@ -36,7 +36,7 @@ class PluginCategories_ActionCategory extends ActionPlugin {
 
         $this->SetTemplateAction('index');
 
-        $aCategories = $this->Category_GetItemsByFilter(array(), 'Category');
+        $aCategories = E::Module('Category')->GetItemsByFilter(array(), 'Category');
         $aCategoriesId = array();
         if ($aCategories) {
             foreach($aCategories as $oCategory) {
@@ -45,21 +45,21 @@ class PluginCategories_ActionCategory extends ActionPlugin {
             $aFilter = array(
                 'top' => array(
                     'category_id' => $aCategoriesId,
-                    'limit' => Config::Get('plugin.categories.topic_top_number'),
+                    'limit' => C::Get('plugin.categories.topic_top_number'),
                 ),
                 'new' => array(
                     'category_id' => $aCategoriesId,
-                    'limit' => Config::Get('plugin.categories.topic_new_number'),
+                    'limit' => C::Get('plugin.categories.topic_new_number'),
                 ),
             );
-            if (!is_null($iRating = Config::Get('plugin.categories.topic_top_rating')) && is_numeric($iRating)) {
+            if (!is_null($iRating = C::Get('plugin.categories.topic_top_rating')) && is_numeric($iRating)) {
                 $aFilter['top']['rating'] = $iRating;
             }
-            if (!is_null($iRating = Config::Get('plugin.categories.topic_new_rating')) && is_numeric($iRating)) {
+            if (!is_null($iRating = C::Get('plugin.categories.topic_new_rating')) && is_numeric($iRating)) {
                 $aFilter['new']['rating'] = $iRating;
             }
 
-            $aCategoryHomeTopics = $this->Category_GetHomeTopics($aFilter);
+            $aCategoryHomeTopics = E::Module('Category')->GetHomeTopics($aFilter);
             $aCategoryTopTopics = (isset($aCategoryHomeTopics['top']) ? $aCategoryHomeTopics['top'] : array());
             foreach($aCategories as $oCategory) {
                 if (isset($aCategoryTopTopics[$oCategory->getId()])) {
@@ -81,9 +81,9 @@ class PluginCategories_ActionCategory extends ActionPlugin {
         }
         Config::Set(
             'plugin.topicintro.preview.size.category-home',
-            Config::Get('plugin.categories.preview.size.category-home')
+            C::Get('plugin.categories.preview.size.category-home')
         );
-        $this->Viewer_Assign('aCategories', $aCategories);
+        E::Module('Viewer')->Assign('aCategories', $aCategories);
     }
 
     /**
@@ -98,7 +98,7 @@ class PluginCategories_ActionCategory extends ActionPlugin {
         $sCatUrl = $this->sCurrentEvent;
 
         // * Проверяем есть ли категория с таким URL
-        $oCategory = $this->Category_GetByFilter(array('category_url' => $sCatUrl), 'Category');
+        $oCategory = E::Module('Category')->GetByFilter(array('category_url' => $sCatUrl), 'Category');
         if (!$oCategory) {
             return parent::EventNotFound();
         }
@@ -112,38 +112,38 @@ class PluginCategories_ActionCategory extends ActionPlugin {
         $iPage = $this->GetParamEventMatch(0, 2) ? $this->GetParamEventMatch(0, 2) : 1;
 
         // * Устанавливаем основной URL для поисковиков
-        if ($iPage == 1 && Config::Get('router.config.homepage') == 'category') {
-            $this->Viewer_SetHtmlCanonical(Config::Get('path.root.url') . '/');
+        if ($iPage == 1 && C::Get('router.config.homepage') == 'category') {
+            E::Module('Viewer')->SetHtmlCanonical(C::Get('path.root.url') . '/');
         }
 
         $aFilter = array(
-            'blog_type' => $this->Blog_GetOpenBlogTypes(),
+            'blog_type' => E::Module('Blog')->GetOpenBlogTypes(),
             'topic_publish' => 1,
             'blog_id' => $aIds
         );
 
         // * Получаем список топиков
-        $aResult = $this->Topic_GetTopicsByFilter($aFilter, $iPage, Config::Get('module.topic.per_page'));
+        $aResult = E::Module('Topic')->GetTopicsByFilter($aFilter, $iPage, C::Get('module.topic.per_page'));
 
         $aTopics = $aResult['collection'];
 
         // * Формируем постраничность
-        $aPaging = $this->Viewer_MakePaging(
-            $aResult['count'], $iPage, Config::Get('module.topic.per_page'), Config::Get('pagination.pages.count'),
+        $aPaging = E::Module('Viewer')->MakePaging(
+            $aResult['count'], $iPage, C::Get('module.topic.per_page'), C::Get('pagination.pages.count'),
             rtrim($oCategory->getLink(), '/')
         );
 
         // * Загружаем переменные в шаблон
-        $this->Viewer_Assign('aPaging', $aPaging);
-        $this->Viewer_Assign('aTopics', $aTopics);
-        $this->Viewer_Assign('oCategory', $oCategory);
+        E::Module('Viewer')->Assign('aPaging', $aPaging);
+        E::Module('Viewer')->Assign('aTopics', $aTopics);
+        E::Module('Viewer')->Assign('oCategory', $oCategory);
     }
 
     public function EventShutdown() {
-        $this->Viewer_Assign(
+        E::Module('Viewer')->Assign(
             'iCountTopicsNew', 
-            $this->Topic_GetCountTopicsCollectiveNew() + 
-            $this->Topic_GetCountTopicsPersonalNew()
+            E::Module('Topic')->GetCountTopicsCollectiveNew() + 
+            E::Module('Topic')->GetCountTopicsPersonalNew()
         );
     }
 

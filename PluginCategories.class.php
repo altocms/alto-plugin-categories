@@ -51,7 +51,7 @@ class PluginCategories extends Plugin {
      */
     public function Init() {
 
-        $this->Viewer_AppendStyle(Plugin::GetTemplateDir(__CLASS__) . 'assets/css/style.css');
+        E::Module('Viewer')->AppendStyle(Plugin::GetTemplateDir(__CLASS__) . 'assets/css/style.css');
     }
 
 }

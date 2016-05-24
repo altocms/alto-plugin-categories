@@ -30,7 +30,7 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
 
     protected function _getBlogs() {
 
-        $aResult = $this->Blog_GetBlogsByFilter(
+        $aResult = E::Module('Blog')->GetBlogsByFilter(
             array('exclude_type' => 'personal'), array('blog_rating' => 'desc'), 1, PHP_INT_MAX
         );
         return $aResult['collection'];
@@ -63,27 +63,27 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
 
         $this->sMainMenuItem = 'content';
 
-        $this->_setTitle($this->Lang_Get('plugin.categories.menu_content_categories'));
+        $this->_setTitle(E::Module('Lang')->Get('plugin.categories.menu_content_categories'));
         $this->SetTemplateAction('categories/list');
 
         // * Получаем список
         $aFilter = array();
-        $aCategories = $this->Category_GetItemsByFilter($aFilter, 'Category');
-        $this->Viewer_Assign('aCategories', $aCategories);
+        $aCategories = E::Module('Category')->GetItemsByFilter($aFilter, 'Category');
+        E::Module('Viewer')->Assign('aCategories', $aCategories);
 
-        $aLangList = $this->Lang_GetLangList();
-        $this->Viewer_Assign('aLangList', $aLangList);
+        $aLangList = E::Module('Lang')->GetLangList();
+        E::Module('Viewer')->Assign('aLangList', $aLangList);
 
         if (F::GetRequest('add')) {
-            $this->Message_AddNoticeSingle($this->Lang_Get('plugin.categories.add_success'));
+            E::Module('Message')->AddNoticeSingle(E::Module('Lang')->Get('plugin.categories.add_success'));
         }
 
         if (F::GetRequest('edit')) {
-            $this->Message_AddNoticeSingle($this->Lang_Get('plugin.categories.edit_success'));
+            E::Module('Message')->AddNoticeSingle(E::Module('Lang')->Get('plugin.categories.edit_success'));
         }
 
         if (F::GetRequest('delete')) {
-            $this->Message_AddNoticeSingle($this->Lang_Get('plugin.categories.delete_success'));
+            E::Module('Message')->AddNoticeSingle(E::Module('Lang')->Get('plugin.categories.delete_success'));
         }
     }
 
@@ -96,26 +96,26 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
 
         $this->sMainMenuItem = 'content';
 
-        $this->_setTitle($this->Lang_Get('plugin.categories.add_title'));
+        $this->_setTitle(E::Module('Lang')->Get('plugin.categories.add_title'));
         $this->SetTemplateAction('categories/add');
 
         // * Вызов хуков
-        $this->Hook_Run('admin_categories_add_show');
+        E::Module('Hook')->Run('admin_categories_add_show');
 
         // * Загружаем переменные в шаблон
-        $this->Viewer_AddHtmlTitle($this->Lang_Get('plugin.categories.add_title'));
+        E::Module('Viewer')->AddHtmlTitle(E::Module('Lang')->Get('plugin.categories.add_title'));
 
         $aBlogs = $this->_getBlogs();
-        $this->Viewer_Assign('aBlogs', $aBlogs);
+        E::Module('Viewer')->Assign('aBlogs', $aBlogs);
 
-        $aLangList = $this->Lang_GetLangList();
-        $this->Viewer_Assign('aLangList', $aLangList);
+        $aLangList = E::Module('Lang')->GetLangList();
+        E::Module('Viewer')->Assign('aLangList', $aLangList);
 
         if (F::isPost('submit_category_add')) {
             // * Обрабатываем отправку формы
             return $this->SubmitCategoriesAdd();
         }
-        if (!Config::Get('plugin.categories.multicategory')) {
+        if (!C::Get('plugin.categories.multicategory')) {
             foreach ($aBlogs as $oBlog) {
                 if ($oBlog->getCategories()) {
                     $_REQUEST['blog'][$oBlog->getId()] = $oBlog->getId();
@@ -141,10 +141,10 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
 
         // * Загрузка аватара категории
         if ($aUploadedFile = $this->GetUploadedFile('category_avatar')) {
-            if ($sPath = $this->Category_UploadCategoryAvatar($aUploadedFile)) {
+            if ($sPath = E::Module('Category')->UploadCategoryAvatar($aUploadedFile)) {
                 $oCategory->setAvatar($sPath);
             } else {
-                $this->Message_AddError($this->Lang_Get('blog_create_avatar_error'), $this->Lang_Get('error'));
+                E::Module('Message')->AddError(E::Module('Lang')->Get('blog_create_avatar_error'), E::Module('Lang')->Get('error'));
                 return false;
             }
         }
@@ -168,18 +168,18 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
         // * Получаем категорию
         $iCategoryId = $this->GetParam(1);
         if (!$iCategoryId
-            || !($oCategory = $this->Category_GetByFilter(array('category_id' => $iCategoryId), 'Category'))
+            || !($oCategory = E::Module('Category')->GetByFilter(array('category_id' => $iCategoryId), 'Category'))
         ) {
             return parent::EventNotFound();
         }
-        $this->Viewer_Assign('oCategory', $oCategory);
+        E::Module('Viewer')->Assign('oCategory', $oCategory);
 
         // * Устанавливаем шаблон вывода
-        $this->_setTitle($this->Lang_Get('plugin.categories.edit_title'));
+        $this->_setTitle(E::Module('Lang')->Get('plugin.categories.edit_title'));
         $this->SetTemplateAction('categories/add');
 
         $aBlogs = $this->_getBlogs();
-        $this->Viewer_Assign('aBlogs', $aBlogs);
+        E::Module('Viewer')->Assign('aBlogs', $aBlogs);
 
         // * Проверяем отправлена ли форма с данными
         if (F::isPost('submit_category_add')) {
@@ -191,14 +191,14 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
             $_REQUEST['category_url'] = $oCategory->getCategoryUrl();
             $_REQUEST['category_avatar'] = $oCategory->getCategoryAvatar();
 
-            if (!Config::Get('plugin.categories.multicategory')) {
+            if (!C::Get('plugin.categories.multicategory')) {
                 foreach ($aBlogs as $oBlog) {
                     if ($oBlog->getCategories()) {
                         $_REQUEST['blog'][$oBlog->getId()] = $oBlog->getId();
                     }
                 }
             } else {
-                $aRelations = $this->Category_GetItemsByFilter(array('category_id' => $iCategoryId), 'Category_CategoryRel');
+                $aRelations = E::Module('Category')->GetItemsByFilter(array('category_id' => $iCategoryId), 'Category_CategoryRel');
                 foreach ($aRelations as $oRel) {
                     $_REQUEST['blog'][$oRel->getBlogId()] = $oRel->getBlogId();
                 }
@@ -220,17 +220,17 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
 
         // * Загрузка аватара категории
         if ($aUploadedFile = $this->GetUploadedFile('category_avatar')) {
-            if ($sPath = $this->Category_UploadCategoryAvatar($aUploadedFile)) {
+            if ($sPath = E::Module('Category')->UploadCategoryAvatar($aUploadedFile)) {
                 $oCategory->setAvatar($sPath);
             } else {
-                $this->Message_AddError($this->Lang_Get('blog_create_avatar_error'), $this->Lang_Get('error'));
+                E::Module('Message')->AddError(E::Module('Lang')->Get('blog_create_avatar_error'), E::Module('Lang')->Get('error'));
                 return false;
             }
         }
 
         // Удалить аватар
         if (F::isPost('category_avatar_delete')) {
-            $this->Category_DeleteCategoryAvatar($oCategory);
+            E::Module('Category')->DeleteCategoryAvatar($oCategory);
             $oCategory->setAvatar(null);
         }
 
@@ -252,15 +252,15 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
 
         $this->SetTemplate(false);
 
-        $this->Security_ValidateSendForm();
+        E::Module('Security')->ValidateSendForm();
         $iCategoryId = $this->GetParam(1);
-        if (!$iCategoryId || !$oCategory = $this->Category_GetByFilter(array('category_id' => $iCategoryId), 'Category')) {
+        if (!$iCategoryId || !$oCategory = E::Module('Category')->GetByFilter(array('category_id' => $iCategoryId), 'Category')) {
             return parent::EventNotFound();
         }
 
         if ($oCategory->Delete()) {
             // * Удаляем связи
-            if ($aRelations = $this->Category_GetItemsByFilter(array('category_id' => $iCategoryId), 'Category_CategoryRel')) {
+            if ($aRelations = E::Module('Category')->GetItemsByFilter(array('category_id' => $iCategoryId), 'Category_CategoryRel')) {
                 foreach ($aRelations as $oRel) {
                     $oRel->Delete();
                 }
@@ -277,7 +277,7 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
     protected function AddRelations($oCategory) {
 
         // * Чистим связи и ставим новые
-        $aRelations = $this->Category_GetItemsByFilter(
+        $aRelations = E::Module('Category')->GetItemsByFilter(
             array('category_id' => $oCategory->getCategoryId()), 'ModuleCategory_EntityCategoryRel'
         );
         foreach ($aRelations as $oRel) {
@@ -301,18 +301,18 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
      */
     protected function CheckCategoryFields() {
 
-        $this->Security_ValidateSendForm();
+        E::Module('Security')->ValidateSendForm();
 
         $bOk = true;
 
         if (!F::CheckVal(F::GetRequest('category_title', null, 'post'), 'text', 2, 200)) {
-            $this->Message_AddError(
-                $this->Lang_Get('plugin.categories.category_title_error'), $this->Lang_Get('error')
+            E::Module('Message')->AddError(
+                E::Module('Lang')->Get('plugin.categories.category_title_error'), E::Module('Lang')->Get('error')
             );
             $bOk = false;
         }
         if (!F::CheckVal(F::GetRequest('category_url', null, 'post'), 'login', 2, 50)) {
-            $this->Message_AddError($this->Lang_Get('plugin.categories.category_url_error'), $this->Lang_Get('error'));
+            E::Module('Message')->AddError(E::Module('Lang')->Get('plugin.categories.category_url_error'), E::Module('Lang')->Get('error'));
             $bOk = false;
         }
 

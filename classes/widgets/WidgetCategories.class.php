@@ -22,8 +22,8 @@ class PluginCategories_WidgetCategories extends Widget {
     public function Exec() {
 
         // * Получаем категории
-        $aCategories = $this->Category_GetItemsByFilter(array(), 'Category');
-        $this->Viewer_Assign('aCategories', $aCategories);
+        $aCategories = E::Module('Category')->GetItemsByFilter(array(), 'Category');
+        E::Module('Viewer')->Assign('aCategories', $aCategories);
     }
 
 }

@@ -27,8 +27,8 @@ class PluginCategories_HookCategories extends Hook {
         // Пункт меню админки
         $this->AddHook('template_admin_menu_content', 'TplAdminMenuContent', null, 10);
 
-        if (!Config::Get('plugin.categories.multicategory')) {
-            if (Config::Get('plugin.categories.select_category') || Config::Get('plugin.categories.change_category')) {
+        if (!C::Get('plugin.categories.multicategory')) {
+            if (C::Get('plugin.categories.select_category') || C::Get('plugin.categories.change_category')) {
                 // Создание блога
                 $this->AddHook('template_form_add_blog_begin', 'TplFormAddBlogBegin');
             }
@@ -41,10 +41,10 @@ class PluginCategories_HookCategories extends Hook {
      */
     public function TplAdminSelectHomepage() {
 
-        $sHomePageSelect = Config::Get('router.config.homepage_select');
-        $this->Viewer_Assign('sHomePageSelect', $sHomePageSelect);
+        $sHomePageSelect = C::Get('router.config.homepage_select');
+        E::Module('Viewer')->Assign('sHomePageSelect', $sHomePageSelect);
 
-        return $this->Viewer_Fetch(Plugin::GetTemplateDir(__CLASS__) . 'tpls/hook.admin_select_homepage.tpl');
+        return E::Module('Viewer')->Fetch(Plugin::GetTemplateDir(__CLASS__) . 'tpls/hook.admin_select_homepage.tpl');
     }
 
     /**
@@ -52,7 +52,7 @@ class PluginCategories_HookCategories extends Hook {
      */
     public function TplAdminMenuContent() {
 
-        return $this->Viewer_Fetch(Plugin::GetTemplateDir(__CLASS__) . 'tpls/hook.admin_menu_content.tpl');
+        return E::Module('Viewer')->Fetch(Plugin::GetTemplateDir(__CLASS__) . 'tpls/hook.admin_menu_content.tpl');
     }
 
     /**
@@ -60,19 +60,19 @@ class PluginCategories_HookCategories extends Hook {
      */
     public function TplFormAddBlogBegin() {
 
-        $aCategories = $this->Category_GetItemsByFilter(array(), 'Category');
+        $aCategories = E::Module('Category')->GetItemsByFilter(array(), 'Category');
         if (Router::GetActionEvent() === 'edit') {
             $iBlogId = (int)$_REQUEST['blog_id'];
             $iBlogCategoryId = 0;
             if ($iBlogId) {
-                $aRelations = $this->Category_GetItemsByFilter(array('blog_id' => $iBlogId), 'Category_CategoryRel');
+                $aRelations = E::Module('Category')->GetItemsByFilter(array('blog_id' => $iBlogId), 'Category_CategoryRel');
                 if ($aRelations) {
                     $oRel = reset($aRelations);
                     $iBlogCategoryId = $oRel->getCategoryId();
-                    $this->Viewer_Assign('iBlogCategoryId', $iBlogCategoryId);
+                    E::Module('Viewer')->Assign('iBlogCategoryId', $iBlogCategoryId);
                 }
             }
-            if (!Config::Get('plugin.categories.change_category')) {
+            if (!C::Get('plugin.categories.change_category')) {
                 if ($iBlogCategoryId) {
                     foreach($aCategories as $iKey => $oCategory) {
                         if ($oCategory->getCategoryId() != $iBlogCategoryId) {
@@ -84,8 +84,8 @@ class PluginCategories_HookCategories extends Hook {
                 }
             }
         }
-        $this->Viewer_Assign('aCategories', $aCategories);
-        return $this->Viewer_Fetch(Plugin::GetTemplateDir(__CLASS__) . 'tpls/hook.form_add_blog_begin.tpl');
+        E::Module('Viewer')->Assign('aCategories', $aCategories);
+        return E::Module('Viewer')->Fetch(Plugin::GetTemplateDir(__CLASS__) . 'tpls/hook.form_add_blog_begin.tpl');
     }
 }
 

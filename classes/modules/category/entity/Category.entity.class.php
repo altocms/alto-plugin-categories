@@ -43,7 +43,7 @@ class PluginCategories_ModuleCategory_EntityCategory extends EntityORM {
      */
     protected function _loadRelations() {
 
-        $aRelations = $this->Category_GetItemsByFilter(
+        $aRelations = E::Module('Category')->GetItemsByFilter(
             array('category_id' => $this->getCategoryId()), 'Category_CategoryRel'
         );
         $this->aBlogRels = array();
@@ -72,7 +72,7 @@ class PluginCategories_ModuleCategory_EntityCategory extends EntityORM {
         if (is_null($aResult)) {
             $aBlogIds = $this->getBlogIds();
             if ($aBlogIds) {
-                $aResult = $this->Blog_GetBlogsAdditionalData($aBlogIds);
+                $aResult = E::Module('Blog')->GetBlogsAdditionalData($aBlogIds);
             } else {
                 $aResult = array();
             }
@@ -94,19 +94,19 @@ class PluginCategories_ModuleCategory_EntityCategory extends EntityORM {
         if (is_array($aBlogIds) && count($aBlogIds)) {
 
             $aFilter = array(
-                'blog_type'     => $this->Blog_GetOpenBlogTypes(),
+                'blog_type'     => E::Module('Blog')->GetOpenBlogTypes(),
                 'topic_publish' => 1,
                 'blog_id'       => $aBlogIds
             );
 
             if ($sType == 'top') {
                 $aFilter['topic_rating'] = array(
-                    'value'         => Config::Get('module.blog.index_good'),
+                    'value'         => C::Get('module.blog.index_good'),
                     'type'          => 'top',
                     'publish_index' => 1,
                 );
             }
-            $aReturn = $this->Topic_GetTopicsByFilter($aFilter, $iPage, $iPerPage, array('user', 'blog'));
+            $aReturn = E::Module('Topic')->GetTopicsByFilter($aFilter, $iPage, $iPerPage, array('user', 'blog'));
             return $aReturn['collection'];
 
         }
@@ -142,23 +142,23 @@ class PluginCategories_ModuleCategory_EntityCategory extends EntityORM {
                 return $sUrl;
             } else {
                 $sUrl .= '-' . $iSize . 'x' . $iSize . '.' . pathinfo($sUrl, PATHINFO_EXTENSION);
-                if (Config::Get('module.image.autoresize')) {
-                    $sFile = $this->Uploader_Url2Dir($sUrl);
+                if (C::Get('module.image.autoresize')) {
+                    $sFile = E::Module('Uploader')->Url2Dir($sUrl);
                     if (!F::File_Exists($sFile)) {
-                        $this->Img_Duplicate($sFile);
+                        E::Module('Img')->Duplicate($sFile);
                     }
                 }
                 return $sUrl;
             }
         } else {
-            $sPath = $this->Uploader_GetUserImageDir(0) . 'avatar_category_' . Config::Get('view.skin') . '.png';
+            $sPath = E::Module('Uploader')->GetUserImageDir(0) . 'avatar_category_' . C::Get('view.skin') . '.png';
             if ($iSize) {
                 $sPath .= '-' . $iSize . 'x' . $iSize . '.' . pathinfo($sPath, PATHINFO_EXTENSION);
             }
-            if (Config::Get('module.image.autoresize') && !F::File_Exists($sPath)) {
-                $this->Img_AutoresizeSkinImage($sPath, 'avatar_category', $iSize ? $iSize : null);
+            if (C::Get('module.image.autoresize') && !F::File_Exists($sPath)) {
+                E::Module('Img')->AutoresizeSkinImage($sPath, 'avatar_category', $iSize ? $iSize : null);
             }
-            return $this->Uploader_Dir2Url($sPath);
+            return E::Module('Uploader')->Dir2Url($sPath);
         }
         return $this->getProp('category_avatar');
     }

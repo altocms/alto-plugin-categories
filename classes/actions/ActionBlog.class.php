@@ -1,16 +1,24 @@
 <?php
+/*---------------------------------------------------------------------------
+ * @Project: Alto CMS
+ * @Project URI: http://altocms.com
+ * @Description: Advanced Community Engine
+ * @Copyright: Alto CMS Team
+ * @License: GNU GPL v2 & MIT
+ *----------------------------------------------------------------------------
+ */
 
 class PluginCategories_ActionBlog extends PluginCategories_Inherits_ActionBlog {
 
     protected function EventShowBlog() {
 
         $xResult = parent::EventShowBlog();
-        $aCategories = $this->Category_GetItemsByFilter(array(), 'Category');
-        $this->Viewer_Assign('aCategories', $aCategories);
+        $aCategories = E::Module('Category')->GetItemsByFilter(array(), 'Category');
+        E::Module('Viewer')->Assign('aCategories', $aCategories);
 
         $sBlogUrl = $this->sCurrentEvent;
-        if ($sBlogUrl && ($oBlog = $this->Blog_GetBlogByUrl($sBlogUrl)) && ($oCategory = $oBlog->getCategory())) {
-            $this->Viewer_Assign('oCurrentCategory', $oCategory);
+        if ($sBlogUrl && ($oBlog = E::Module('Blog')->GetBlogByUrl($sBlogUrl)) && ($oCategory = $oBlog->getCategory())) {
+            E::Module('Viewer')->Assign('oCurrentCategory', $oCategory);
         }
         return $xResult;
     }
@@ -25,7 +33,7 @@ class PluginCategories_ActionBlog extends PluginCategories_Inherits_ActionBlog {
         $xResult = parent::_addBlog($oBlog);
         $iCategoryId = (int)F::GetRequest('category_id');
 
-        if ($xResult && !Config::Get('plugin.categories.multicategory')  && Config::Get('plugin.categories.select_category')) {
+        if ($xResult && !C::Get('plugin.categories.multicategory')  && C::Get('plugin.categories.select_category')) {
             if ($iCategoryId && E::Category_GetByFilter(array('category_id' => $iCategoryId), 'Category')) {
                 $oRel = Engine::GetEntity('Category_CategoryRel');
                 $oRel->setCategoryId($iCategoryId);
@@ -47,8 +55,8 @@ class PluginCategories_ActionBlog extends PluginCategories_Inherits_ActionBlog {
         $xResult = parent::_updateBlog($oBlog);
         $iCategoryId = (int)F::GetRequest('category_id');
 
-        if ($xResult && $iCategoryId && !Config::Get('plugin.categories.multicategory')  && Config::Get('plugin.categories.change_category')) {
-            $aRelations = $this->Category_GetItemsByFilter(array('blog_id' => $oBlog->getId()), 'Category_CategoryRel');
+        if ($xResult && $iCategoryId && !C::Get('plugin.categories.multicategory')  && C::Get('plugin.categories.change_category')) {
+            $aRelations = E::Module('Category')->GetItemsByFilter(array('blog_id' => $oBlog->getId()), 'Category_CategoryRel');
             if ($aRelations) {
                 $oRel = reset($aRelations);
                 if ($oRel->getCategoryId() != $iCategoryId) {
