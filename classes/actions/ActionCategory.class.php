@@ -93,18 +93,11 @@ class PluginCategories_ActionCategory extends ActionPlugin {
      */
     protected function EventCategoryList() {
 
-        $this->SetTemplateAction('list');
-
         $sCatUrl = $this->sCurrentEvent;
 
         // * Проверяем есть ли категория с таким URL
         $oCategory = E::Module('Category')->GetByFilter(array('category_url' => $sCatUrl), 'Category');
         if (!$oCategory) {
-            return parent::EventNotFound();
-        }
-
-        // * Есть ли подключенные к категории блоги
-        if (!($aIds = $oCategory->getBlogIds())) {
             return parent::EventNotFound();
         }
 
@@ -116,29 +109,71 @@ class PluginCategories_ActionCategory extends ActionPlugin {
             E::Module('Viewer')->SetHtmlCanonical(C::Get('path.root.url') . '/');
         }
 
-        $aFilter = array(
-            'blog_type' => E::Module('Blog')->GetOpenBlogTypes(),
-            'topic_publish' => 1,
-            'blog_id' => $aIds
-        );
+        return $this->_showCategoryPage($oCategory, C::Get('plugin.categories.category_page'), $iPage, C::Get('module.topic.per_page'));
+    }
 
-        // * Получаем список топиков
-        $aResult = E::Module('Topic')->GetTopicsByFilter($aFilter, $iPage, C::Get('module.topic.per_page'));
+    /**
+     * @param $oCategory
+     * @param $sMode
+     * @param $iPage
+     * @param $iPerPage
+     * 
+     * @return string
+     */
+    protected function _showCategoryPage($oCategory, $sMode, $iPage = 1, $iPerPage = 0) {
 
-        $aTopics = $aResult['collection'];
+        if ($sMode === 'blogs') {
+            // * Есть ли подключенные к категории блоги
+            if (!($aBlogIds = $oCategory->getBlogIds())) {
+                return parent::EventNotFound();
+            }
+            $aFilter = array(
+                'blog_type' => E::Module('Blog')->GetOpenBlogTypes(),
+                'blog_id' => $aBlogIds
+            );
+            $aResult = E::Module('Blog')->GetBlogsByFilter($aFilter, $iPage, $iPerPage);
 
-        // * Формируем постраничность
-        $aPaging = E::Module('Viewer')->MakePaging(
-            $aResult['count'], $iPage, C::Get('module.topic.per_page'), C::Get('pagination.pages.count'),
-            rtrim($oCategory->getLink(), '/')
-        );
+            $aBlogs = $aResult['collection'];
+            $iTotalItems = $aResult['count'];
+            
+            E::Module('Viewer')->Assign('aBlogs', $aBlogs);
+            $this->SetTemplateAction('list_blogs');
+        } else {
+            // * Есть ли подключенные к категории блоги
+            if (!($aBlogIds = $oCategory->getBlogIds())) {
+                return parent::EventNotFound();
+            }
+            $aFilter = array(
+                'blog_type' => E::Module('Blog')->GetOpenBlogTypes(),
+                'topic_publish' => 1,
+                'blog_id' => $aBlogIds
+            );
+            // * Получаем список топиков
+            $aResult = E::Module('Topic')->GetTopicsByFilter($aFilter, $iPage, $iPerPage);
 
-        // * Загружаем переменные в шаблон
-        E::Module('Viewer')->Assign('aPaging', $aPaging);
-        E::Module('Viewer')->Assign('aTopics', $aTopics);
+            $aTopics = $aResult['collection'];
+            $iTotalItems = $aResult['count'];
+
+            // * Загружаем переменные в шаблон
+            E::Module('Viewer')->Assign('aTopics', $aTopics);
+            $this->SetTemplateAction('list_topics');
+        }
+
+        if ($iTotalItems && $iPerPage && $iTotalItems < $iPerPage) {
+            // * Формируем постраничность
+            $aPaging = E::Module('Viewer')->MakePaging(
+                $aResult['count'], $iPage, $iPerPage, C::Get('pagination.pages.count'),
+                rtrim($oCategory->getLink(), '/')
+            );
+            E::Module('Viewer')->Assign('aPaging', $aPaging);
+        }
+        
         E::Module('Viewer')->Assign('oCategory', $oCategory);
     }
 
+    /**
+     * 
+     */
     public function EventShutdown() {
         E::Module('Viewer')->Assign(
             'iCountTopicsNew', 

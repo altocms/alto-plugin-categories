@@ -138,6 +138,7 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
         $oCategory = Engine::GetEntity('Category');
         $oCategory->setCategoryTitle(F::GetRequest('category_title'));
         $oCategory->setCategoryUrl(F::GetRequest('category_url'));
+        $oCategory->setCategorySort((int)F::GetRequest('category_sort'));
 
         // * Загрузка аватара категории
         if ($aUploadedFile = $this->GetUploadedFile('category_avatar')) {
@@ -189,6 +190,7 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
             $_REQUEST['category_id'] = $oCategory->getCategoryId();
             $_REQUEST['category_title'] = $oCategory->getCategoryTitle();
             $_REQUEST['category_url'] = $oCategory->getCategoryUrl();
+            $_REQUEST['category_sort'] = $oCategory->getCategorySort();
             $_REQUEST['category_avatar'] = $oCategory->getCategoryAvatar();
 
             if (!C::Get('plugin.categories.multicategory')) {
@@ -217,6 +219,7 @@ class PluginCategories_ActionAdmin extends PluginCategories_Inherits_ActionAdmin
         // * Обновляем данные
         $oCategory->setCategoryTitle(F::GetRequest('category_title'));
         $oCategory->setCategoryUrl(F::GetRequest('category_url'));
+        $oCategory->setCategorySort((int)F::GetRequest('category_sort'));
 
         // * Загрузка аватара категории
         if ($aUploadedFile = $this->GetUploadedFile('category_avatar')) {

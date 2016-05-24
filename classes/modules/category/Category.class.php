@@ -23,6 +23,27 @@ class PluginCategories_ModuleCategory extends ModuleORM {
         $this->oMapper = Engine::GetMapper(__CLASS__);
     }
 
+    /**
+     * @param array $aFilter
+     * @param null $sEntityFull
+     * 
+     * @return array
+     * @throws Exception
+     */
+    public function GetItemsByFilter($aFilter = array(), $sEntityFull = null) {
+
+        if ($sEntityFull === 'Category' && !isset($aFilter['#order'])) {
+            $aFilter['#order'] = array(
+                'category_sort' => 'desc',
+                'category_title' => 'asc',
+            );
+        }
+        return parent::GetItemsByFilter($aFilter, $sEntityFull);
+    }
+
+    /**
+     *
+     */
     public function InitConfigMainPreview() {
 
         Config::Set(

@@ -30,6 +30,8 @@ return array(
     'category_title_notice'         => 'Enter original name of category or enter key phrase from language file in double braces: {{...}}',
     'category_url'                  => 'URL',
     'category_url_notice'           => 'E.c. <strong>news</strong>',
+    'category_sort'                 => 'Sort',
+    'category_sort_notice'          => 'It specifies the order of categories (the higher the number is in top)',
     'category_avatar'               => 'Avatar of category',
     'category_avatar_notice'        => 'Upload image if you want category have avatar',
     'category_avatar_delete'        => 'Remove avatar',

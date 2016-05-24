@@ -13,7 +13,7 @@
         <div class="b-wbox">
             <div class="b-wbox-content nopadding">
 
-                <table class="table table-striped table-condensed pages-list" id="sortable">
+                <table class="table table-striped table-condensed pages-list">
                     <thead>
                     <tr>
                         <th class="span1">ID</th>
@@ -25,7 +25,7 @@
                     </tr>
                     </thead>
 
-                    <tbody class="content">
+                    <tbody class="content js-sortable">
                     {if count($aCategories)>0}
                         {foreach from=$aCategories item=oCategory}
                             <tr id="{$oCategory->getCategoryId()}" class="cursor-x">

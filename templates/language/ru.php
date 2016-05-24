@@ -30,6 +30,8 @@ return array(
     'category_title_notice'         => 'Введите название категории или укажите фразу из языкового файла в двойных фигурных скобках: {{...}}',
     'category_url'                  => 'URL',
     'category_url_notice'           => 'Например, <strong>news</strong>',
+    'category_sort'                 => 'Сортировка',
+    'category_sort_notice'          => 'Задает порядок при выводе (чем больше число, тем выше)',
     'category_avatar'               => 'Аватар категории',
     'category_avatar_notice'        => 'Загрузите изображение, если хотите, чтобы у категории был аватар',
     'category_avatar_delete'        => 'Удалить аватар',

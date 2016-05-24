@@ -2,7 +2,7 @@
 
 {block name="content-bar"}
     <div class="btn-group">
-        <a href="{router page='admin'}content-categories/" class="btn"><i class="icon-chevron-left"></i></a>
+        <a href="{router page='admin'}content-categories/" class="btn btn-default"><i class="icon icon-action-undo"></i></a>
     </div>
 {/block}
 
@@ -46,6 +46,19 @@
                                    id="category_url" name="category_url" value="{$_aRequest.category_url}"
                                    class="input-text"/>
                             <span class="help-block">{$aLang.plugin.categories.category_url_notice}</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="category_sort" class="control-label">
+                            {$aLang.plugin.categories.category_sort}:
+                        </label>
+
+                        <div class="controls">
+                            <input type="text"
+                                   id="category_sort" name="category_sort" value="{$_aRequest.category_sort}"
+                                   class="input-text"/>
+                            <span class="help-block">{$aLang.plugin.categories.category_sort_notice}</span>
                         </div>
                     </div>
 
